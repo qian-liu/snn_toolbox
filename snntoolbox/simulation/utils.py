@@ -419,6 +419,7 @@ class AbstractSNN:
 
         self.add_input_layer(batch_shape)
 
+
         # Iterate over layers to create spiking neurons and connections.
         for layer in parsed_model.layers[1:]:
             print("Building layer: {}".format(layer.name))
@@ -654,6 +655,7 @@ class AbstractSNN:
                   "\n".format(self.top_k, 1 - self.top1err_ann,
                               1 - self.top5err_ann))
 
+            '''
             # Plot input image.
             if 'input_image' in self._plot_keys:
                 snn_plt.plot_input_image(x_b_l[0], int(truth_b[0]), log_dir,
@@ -720,7 +722,7 @@ class AbstractSNN:
             if len(self._plot_keys) > 0:
                 snn_plt.output_graphs(plot_vars, self.config, log_dir, 0,
                                       self.data_format)
-
+            '''
             # Reset network variables.
             self.reset(batch_idx)
             self.reset_log_vars()

@@ -40,7 +40,7 @@ class SpikeLayer(Layer):
         self.dt = self.config.getfloat('simulation', 'dt')
         self.duration = self.config.getint('simulation', 'duration')
         self.tau_refrac = self.config.getfloat('cell', 'tau_refrac')
-        self._v_thresh = self.config.getfloat('cell', 'v_thresh')
+        self._v_thresh = self.config.getint('cell', 'v_thresh')
         self.v_thresh = None
         self.time = None
         self.mem = self.spiketrain = self.impulse = self.spikecounts = None
@@ -379,7 +379,7 @@ class SpikeLayer(Layer):
 
         output_shape = self.compute_output_shape(input_shape)
         self.v_thresh = k.variable(self._v_thresh)
-        self.mem = k.variable(self.init_membrane_potential(output_shape))
+        self.mem = k.variable(self.init_membrane_potential(output_shape)) #LQ
         self.time = k.variable(self.dt)
         # To save memory and computations, allocate only where needed:
         if self.tau_refrac > 0:

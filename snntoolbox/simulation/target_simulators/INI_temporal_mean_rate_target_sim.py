@@ -100,14 +100,25 @@ class SNN(AbstractSNN):
         pass
 
     def compile(self):
-        from snntoolbox.simulation.backends.inisim.temporal_mean_rate_theano \
+        from snntoolbox.simulation.backends.inisim.temporal_mean_rate_tensorflow \
             import bias_relaxation
 
         self.snn = keras.models.Model(
             self._input_images,
             self._spiking_layers[self.parsed_model.layers[-1].name])
         self.snn.compile('sgd', 'categorical_crossentropy', ['accuracy'])
-        self.snn.set_weights(self.parsed_model.get_weights())
+        w_list = self.parsed_model.get_weights()
+        w_max = 0
+        for i in range(len(w_list)):
+            if len(self.parsed_model.layers[i+1].get_weights()):
+                w_max = max(np.amax(np.abs(w_list[i])), w_max)
+        w_step = w_max / 255.
+        for i in range(len(w_list)):
+            if len(self.parsed_model.layers[i+1].get_weights()):
+                w_list[i] = np.round(w_list[i] / w_step) #* w_step
+
+
+        self.snn.set_weights(w_list)
         for layer in self.snn.layers:
             if hasattr(layer, 'bias'):
                 # Adjust biases to time resolution of simulator.
@@ -159,6 +170,7 @@ class SNN(AbstractSNN):
             else:
                 output_b_l_t[:, :, sim_step_int] = out_spikes > 0
 
+            '''
             # Record neuron variables.
             i = j = 0
             for layer in self.snn.layers:
@@ -207,6 +219,7 @@ class SNN(AbstractSNN):
             else:
                 sys.stdout.write('\r{:>7.2%}'.format(current_acc))
                 sys.stdout.flush()
+            '''
 
         if self._dataset_format == 'aedat':
             remaining_events = len(kwargs[str('dvs_gen')].event_deques_batch[0])

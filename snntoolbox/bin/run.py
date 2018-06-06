@@ -39,6 +39,9 @@ def main():
     #filepath = '/mnt/2646BAF446BAC3B9/Repositories/NPP/snn_toolbox/examples/models/lenet5/keras/config'
     #filepath = '/home/rbodo/.snntoolbox/data/mnist/cnn/lenet5/keras/32bit/log/gui/14/config'
     #args.terminal = True
+
+    print(filepath)
+
     if filepath is not None:
         assert os.path.isfile(filepath), \
             "Configuration file not found at {}.".format(filepath)
@@ -62,4 +65,6 @@ def main():
 
 
 if __name__ == '__main__':
+    import numpy as np
+    np.random.seed(100)
     main()
