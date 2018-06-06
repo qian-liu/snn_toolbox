@@ -1,0 +1,26 @@
+[paths]
+dataset_path = %(path_wd)s/../examples/datasets/mnist
+filename_ann = 99.33
+
+[tools]
+evaluate_ann = False
+quantize = True
+quantize_num_bit = 8
+
+[simulation]
+keras_backend = tensorflow
+simulator = INI
+duration = 100
+num_to_test = 10000
+batch_size = 100
+
+[input]
+poisson_input = True
+
+[output]
+log_vars = {'all'}
+plot_vars = {'all'}
+
+[cell]
+reset = Reset by subtraction
+v_thresh = 368

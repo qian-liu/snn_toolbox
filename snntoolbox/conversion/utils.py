@@ -24,6 +24,24 @@ from future import standard_library
 standard_library.install_aliases()
 
 
+def quantize_parameters(model, num_bit=8):
+    w_max = 0
+    for layer in model.layers:
+        w = layer.get_weights()
+        if len(w) > 0:
+            w_max = max(np.amax(np.abs(w[0])), w_max)
+
+    w_step = w_max / (2. ** num_bit - 1.)
+
+    for layer in model.layers:
+        w = layer.get_weights()
+        if len(w) > 0:
+            w[0] = np.round(w[0] / w_step) #* w_step
+            if 'Conv' in layer.name:
+                layer.set_weights(w)
+                layer.v_thresh = (2. ** num_bit - 1) / w_max
+    print('The model is quantized')
+
 def normalize_parameters(model, config, **kwargs):
     """Normalize the parameters of a network.
 

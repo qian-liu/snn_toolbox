@@ -40,6 +40,10 @@ class SpikeLayer(Layer):
         self.dt = self.config.getfloat('simulation', 'dt')
         self.duration = self.config.getint('simulation', 'duration')
         self.tau_refrac = self.config.getfloat('cell', 'tau_refrac')
+        # if 'v_thresh' in kwargs:
+        #     self._v_thresh = kwargs['v_thresh']
+        # else:
+        #     self._v_thresh = self.config.getfloat('cell', 'v_thresh')
         self._v_thresh = self.config.getfloat('cell', 'v_thresh')
         self.v_thresh = None
         self.time = None

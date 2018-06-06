@@ -79,6 +79,9 @@ class SNN(AbstractSNN):
             layer_kwargs['activation'] = self._binary_activation
             self._binary_activation = None
 
+        if hasattr(layer, 'v_thresh'): #LQ calculated v_thresh
+            layer_kwargs['v_thresh'] = layer.v_thresh
+
         # Replace activation from kwargs by 'linear' before initializing
         # superclass, because the relu activation is applied by the spike-
         # generation mechanism automatically. In some cases (quantized
@@ -108,21 +111,7 @@ class SNN(AbstractSNN):
             self._spiking_layers[self.parsed_model.layers[-1].name])
         self.snn.compile('sgd', 'categorical_crossentropy', ['accuracy'])
 
-        #LQ quantizing the weights into 8 bits.
-        w_list = self.parsed_model.get_weights()
-        w_max = 0
-        for i in range(len(w_list)):
-            if len(self.parsed_model.layers[i+1].get_weights()):
-                w_max = max(np.amax(np.abs(w_list[i])), w_max)
-        w_step = w_max / 255.
-        for i in range(len(w_list)):
-            if len(self.parsed_model.layers[i+1].get_weights()):
-                w_list[i] = np.round(w_list[i] / w_step) #* w_step
-
-
-        self.snn.set_weights(w_list)
-        #LQ TODO: Move the quantization to a proper place
-
+        self.snn.set_weights(self.parsed_model.get_weights())
         for layer in self.snn.layers:
             if hasattr(layer, 'bias'):
                 # Adjust biases to time resolution of simulator.

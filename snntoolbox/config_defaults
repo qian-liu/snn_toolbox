@@ -33,6 +33,8 @@ evaluate_ann = True
 normalize = True
 convert = True
 simulate = True
+quantize = True
+quantize_num_bit = 8
 
 [normalization]
 percentile = 99.9

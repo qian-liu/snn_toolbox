@@ -54,6 +54,7 @@ def test_full(config, queue=None):
 
     from snntoolbox.datasets.utils import get_dataset
     from snntoolbox.conversion.utils import normalize_parameters
+    from snntoolbox.conversion.utils import quantize_parameters
 
     num_to_test = config.getint('simulation', 'num_to_test')
 
@@ -93,6 +94,10 @@ def test_full(config, queue=None):
 
         if config.getboolean('tools', 'normalize') and not is_stop(queue):
             normalize_parameters(parsed_model, config, **normset)
+
+        if config.getboolean('tools', 'quantize') and not is_stop(queue):
+            num_bit = config.getint('tools', 'quantize_num_bit')
+            quantize_parameters(parsed_model, num_bit)
 
         # Evaluate parsed model.
         if config.getboolean('tools', 'evaluate_ann') and not is_stop(queue):
