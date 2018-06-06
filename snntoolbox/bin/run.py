@@ -24,6 +24,8 @@ def main():
     executable during :ref:`installation` that can be called from terminal.
 
     """
+    import numpy as np
+    np.random.seed(100) #LQ: same random seed for every run
 
     parser = argparse.ArgumentParser(
         description='Run SNN toolbox to convert an analog neural network into '
@@ -40,7 +42,7 @@ def main():
     #filepath = '/home/rbodo/.snntoolbox/data/mnist/cnn/lenet5/keras/32bit/log/gui/14/config'
     #args.terminal = True
 
-    print(filepath)
+    print(filepath) #LQ: Print out the path of the configuration file
 
     if filepath is not None:
         assert os.path.isfile(filepath), \
@@ -65,6 +67,4 @@ def main():
 
 
 if __name__ == '__main__':
-    import numpy as np
-    np.random.seed(100)
     main()

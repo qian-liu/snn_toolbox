@@ -655,7 +655,7 @@ class AbstractSNN:
                   "\n".format(self.top_k, 1 - self.top1err_ann,
                               1 - self.top5err_ann))
 
-            '''
+            ''' LQ: stop plotting to save time
             # Plot input image.
             if 'input_image' in self._plot_keys:
                 snn_plt.plot_input_image(x_b_l[0], int(truth_b[0]), log_dir,

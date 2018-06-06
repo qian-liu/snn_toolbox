@@ -127,10 +127,6 @@ def normalize_parameters(model, config, **kwargs):
                             sparsity=sparsity)
 
     # Apply scale factors to normalize the parameters.
-
-    cons_scale = 1.5
-    scale_count = 0.
-
     for layer in model.layers:
         # Skip if layer has no parameters
         if len(layer.weights) == 0:
@@ -150,22 +146,16 @@ def normalize_parameters(model, config, **kwargs):
         else:
             scale_fac = scale_facs[layer.name]
         inbound = get_inbound_layers_with_params(layer)
-
-
         if len(inbound) == 0:  # Input layer
             # noinspection PyProtectedMember
-
-            # scale_count += 1.
             input_layer = layer._inbound_nodes[0].inbound_layers[0].name
             parameters_norm = [
-                parameters[0] * scale_facs[input_layer] / scale_fac * cons_scale,
-                parameters[1] / scale_fac * cons_scale ** scale_count]
+                parameters[0] * scale_facs[input_layer] / scale_fac,
+                parameters[1] / scale_fac]
         elif len(inbound) == 1:
-
-            # scale_count += 1.
             parameters_norm = [
-                parameters[0] * scale_facs[inbound[0].name] / scale_fac * cons_scale,
-                parameters[1] / scale_fac * cons_scale ** scale_count]
+                parameters[0] * scale_facs[inbound[0].name] / scale_fac,
+                parameters[1] / scale_fac]
         else:
             parameters_norm = [parameters[0]]  # Consider only weights at first
             offset = 0  # Index offset at input filter dimension

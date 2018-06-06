@@ -101,12 +101,14 @@ class SNN(AbstractSNN):
 
     def compile(self):
         from snntoolbox.simulation.backends.inisim.temporal_mean_rate_tensorflow \
-            import bias_relaxation
+            import bias_relaxation #LQ: backend tensorflow
 
         self.snn = keras.models.Model(
             self._input_images,
             self._spiking_layers[self.parsed_model.layers[-1].name])
         self.snn.compile('sgd', 'categorical_crossentropy', ['accuracy'])
+
+        #LQ quantizing the weights into 8 bits.
         w_list = self.parsed_model.get_weights()
         w_max = 0
         for i in range(len(w_list)):
@@ -119,6 +121,8 @@ class SNN(AbstractSNN):
 
 
         self.snn.set_weights(w_list)
+        #LQ TODO: Move the quantization to a proper place
+
         for layer in self.snn.layers:
             if hasattr(layer, 'bias'):
                 # Adjust biases to time resolution of simulator.
@@ -170,7 +174,7 @@ class SNN(AbstractSNN):
             else:
                 output_b_l_t[:, :, sim_step_int] = out_spikes > 0
 
-            '''
+            '''LQ: NO readout to save time
             # Record neuron variables.
             i = j = 0
             for layer in self.snn.layers:
